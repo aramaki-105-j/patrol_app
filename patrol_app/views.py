@@ -1,14 +1,11 @@
-<<<<<<< Updated upstream
 from django.shortcuts import render
-
-# Create your views here.
-=======
+from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from allauth.account import views
 from django.views import View
 from patrol_app.models import CustomUser
-from accounts.forms import ProfileForm
+from patrol_app.forms import ProfileForm
 
 class TopView(TemplateView):
    template_name = 'Top.html'
@@ -57,4 +54,5 @@ class ProfileEditView(View):
         return render(request, 'registration/profile.html', {
             'form': form
         })
->>>>>>> Stashed changes
+
+
