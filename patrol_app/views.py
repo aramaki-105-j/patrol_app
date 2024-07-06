@@ -6,9 +6,10 @@ from allauth.account import views
 from django.views import View
 from patrol_app.models import CustomUser
 from patrol_app.forms import ProfileForm
+from django.conf import settings
 
 class TopView(TemplateView):
-   template_name = 'Top.html'
+   template_name = 'top.html'
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
@@ -47,7 +48,6 @@ class ProfileEditView(View):
             user_data.telephone_number = form.cleaned_data['telephone_number']
             user_data.post_code = form.cleaned_data['post_code']
             user_data.address = form.cleaned_data['address']
-            
             user_data.save()
             return redirect('profile')
 
@@ -55,3 +55,10 @@ class ProfileEditView(View):
             'form': form
         })
 
+class MapView(TemplateView):
+    template_name = 'map.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['GOOGLE_MAPS_API_KEY'] = settings.GOOGLE_MAPS_API_KEY
+        return context

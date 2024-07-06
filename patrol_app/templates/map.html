@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}patrol Map{% endblock %}
+
+{% block extra_head %}
+<script>
+  function initMap() {
+      var location = {lat: 34.823278, lng: 135.383083};  // 長尾小学校の緯度と経度
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 16,
+          center: location
+      });
+    
+  }
+  window.onload = initMap;
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="map" style="height: 500px; width: 100%;" onload="initMap()"></div>
+{% endblock %}
