@@ -55,4 +55,3 @@ class ProfileEditView(View):
             'form': form
         })
 
-

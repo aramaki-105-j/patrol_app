@@ -32,3 +32,4 @@ class ProfileForm(forms.Form):
     telephone_number = forms.CharField(max_length=150, label='電話番号')
     post_code = forms.CharField(max_length=150, label='郵便番号')
     address = forms.CharField(max_length=150, label='住所')
+
