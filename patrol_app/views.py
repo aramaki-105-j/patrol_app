@@ -1,8 +1,5 @@
-<<<<<<< Updated upstream
 from django.shortcuts import render
-
-# Create your views here.
-=======
+from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from allauth.account import views
@@ -57,4 +54,4 @@ class ProfileEditView(View):
         return render(request, 'registration/profile.html', {
             'form': form
         })
->>>>>>> Stashed changes
+

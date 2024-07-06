@@ -3,7 +3,6 @@ from allauth.account.forms import SignupForm
 from allauth.account.adapter import DefaultAccountAdapter
 from .models import CustomUser
 
-
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='姓')
     last_name = forms.CharField(max_length=30, label='名')
@@ -23,6 +22,7 @@ class CustomSignupForm(SignupForm):
         user.post_code = self.cleaned_data['post_code']
         user.address = self.cleaned_data['address']
         user.save()
+
         return user
 
 class ProfileForm(forms.Form):
@@ -32,3 +32,4 @@ class ProfileForm(forms.Form):
     telephone_number = forms.CharField(max_length=150, label='電話番号')
     post_code = forms.CharField(max_length=150, label='郵便番号')
     address = forms.CharField(max_length=150, label='住所')
+

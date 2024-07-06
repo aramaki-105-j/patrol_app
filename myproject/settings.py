@@ -47,11 +47,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'patol_app'
+    'patrol_app',
 
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'widget_tweaks',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +148,31 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+'allauth.account.auth_backends.AuthenticationBackend',
+'django.contrib.auth.backends.ModelBackend',
+]
+
+AUTH_USER_MODEL = 'patrol_app.CustomUser'
+
+
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
+ACCOUNT_EMAIL_VARIFICATION = 'none'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/account/login/?next=/email_authenticated/'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/email_authenticated/'
+ACCOUNT_LOGOUT_ON_GET = True
+
+ACCOUNT_FORMS = {'signup': 'patrol_app.forms.CustomSignupForm',}
+ACCOUNT_ADAPTER = 'patrol_app.adapter.AccountAdapter'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
