@@ -24,15 +24,11 @@
         </li>
       {% if user.is_authenticated %}
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'profile' %}">プロフィール</a>
+      </li>
         <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
       </li>
-
-      {% elif request.user.is_active %}
       
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
-      </li>
-
       {% else %}
       <li class="nav-item">
         <a class="nav-link" href="{% url 'account_signup' %}">サインアップ</a>
