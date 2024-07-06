@@ -159,7 +159,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'patrol_app.CustomUser'
 
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/map/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
@@ -176,3 +176,5 @@ ACCOUNT_FORMS = {'signup': 'patrol_app.forms.CustomSignupForm',}
 ACCOUNT_ADAPTER = 'patrol_app.adapter.AccountAdapter'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
