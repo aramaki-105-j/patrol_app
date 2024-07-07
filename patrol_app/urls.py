@@ -6,5 +6,9 @@ urlpatterns = [
     path('account/', include('allauth.urls')),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/edit/', views.ProfileEditView.as_view(), name='profile_edit'),
+
     path('map/', views.MapView.as_view(), name='map'),
+    path('get_markers/', views.MarkerListView.as_view(), name='get_markers'),
+    path('add_marker/', views.MarkerCreateView.as_view(), name='add_marker'),
+    path('update_marker/', views.MarkerUpdateView.as_view(), name='update_marker'),
 ]

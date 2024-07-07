@@ -41,3 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
+
+class Marker(models.Model):
+    lat = models.FloatField()
+    lng = models.FloatField()

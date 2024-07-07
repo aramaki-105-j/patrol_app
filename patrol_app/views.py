@@ -1,12 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
 from allauth.account import views
 from django.views import View
-from patrol_app.models import CustomUser
+from patrol_app.models import CustomUser, Marker
 from patrol_app.forms import ProfileForm
 from django.conf import settings
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 class TopView(TemplateView):
    template_name = 'top.html'
@@ -62,3 +65,35 @@ class MapView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['GOOGLE_MAPS_API_KEY'] = settings.GOOGLE_MAPS_API_KEY
         return context
+
+class MarkerListView(View):
+    def get(self, request):
+        markers = Marker.objects.all()
+        marker_list = [{'id': marker.id, 'lat': marker.lat, 'lng': marker.lng} for marker in markers]
+        return JsonResponse(marker_list, safe=False)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MarkerCreateView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        lat = data.get('lat')
+        lng = data.get('lng')
+        if lat and lng:
+            Marker.objects.create(lat=lat, lng=lng)
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MarkerUpdateView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        marker_id = data.get('id')
+        lat = data.get('lat')
+        lng = data.get('lng')
+        if marker_id and lat and lng:
+            marker = get_object_or_404(Marker, id=marker_id)
+            marker.lat = lat
+            marker.lng = lng
+            marker.save()
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
