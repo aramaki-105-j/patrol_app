@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}レビュー画面{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <a href="{% url 'review_create' marker_id=marker.id %}" class="btn btn-primary">新規投稿</a>
+  </div>
+
+  <div class="row">
+    {% for review in reviews %}
+    <div class="col-md-4 mb-3">
+      <div class="card h-100">
+        {% if review.image %}
+        <img src="{{ review.image.url }}" alt="Review image" class="card-img-top" style="height: 200px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body">
+          <p class="card-text">{{ review.content }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django import forms
 from allauth.account.forms import SignupForm
 from allauth.account.adapter import DefaultAccountAdapter
-from .models import CustomUser
+from .models import CustomUser, Review
 
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='姓')
@@ -33,3 +33,7 @@ class ProfileForm(forms.Form):
     post_code = forms.CharField(max_length=150, label='郵便番号')
     address = forms.CharField(max_length=150, label='住所')
 
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['content', 'image']
