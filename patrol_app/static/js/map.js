@@ -1,92 +1,132 @@
 function initMap() {
-  var location = {lat: 34.823278, lng: 135.383083};  // 長尾小学校の緯度と経度
-  var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 16,
-      center: location
-  });
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 16,
+        center: { lat: 34.823278, lng: 135.383083 }
+    });
 
-  // サーバーから既存のマーカーを取得します
-  fetch('/get_markers/')
-      .then(response => response.json())
-      .then(data => {
-          data.forEach(markerData => {
-              var marker = new google.maps.Marker({
-                  position: {lat: markerData.lat, lng: markerData.lng},
-                  map: map,
-                  draggable: true  // ドラッグを有効にする
-              });
+    let currentInfoWindow = null;
 
-              // マーカーにクリックイベントを追加する
-              marker.addListener('click', function() {
-                  window.location.href = '/review/' + markerData.lat + ',' + markerData.lng;
-              });
+    // マーカーを読み込む関数
+    function loadMarkers() {
+        fetch('/get_markers/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(marker => {
+                    const mapMarker = new google.maps.Marker({
+                        position: { lat: marker.lat, lng: marker.lng },
+                        map: map,
+                        draggable: true // ドラッグを有効にする
+                    });
 
-              // マーカーの位置を更新するためにドラッグイベントを追加します
-              marker.addListener('dragend', function(event) {
-                  updateMarkerPosition(event.latLng, markerData.id);
-              });
-          });
-      });
+                    const infoWindowContent = `
+                        <div>
+                            <p>マーカーID: ${marker.id}</p>
+                            <button onclick="window.location.href='/marker_detail/${marker.id}/'">詳細</button>
+                        </div>
+                    `;
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: infoWindowContent
+                    });
 
-  // クリックイベントをマップに追加する
-  map.addListener('click', function(event) {
-      placeMarker(event.latLng, map);
-      saveMarker(event.latLng);  // マーカーをデータベースに保存します
-  });
-}
+                    // マウスオーバーでInfoWindowを表示するリスナーを追加
+                    mapMarker.addListener('mouseover', function() {
+                        if (currentInfoWindow) {
+                            currentInfoWindow.close();
+                        }
+                        infoWindow.open(map, mapMarker);
+                        currentInfoWindow = infoWindow;
+                    });
 
-function placeMarker(location, map) {
-  var marker = new google.maps.Marker({
-      position: location,
-      map: map,
-      draggable: true  // ドラッグを有効にする
-  });
+                    // 右クリックでマーカーを削除するリスナーを追加
+                    mapMarker.addListener('rightclick', function() {
+                        if (confirm('このマーカーを削除しますか？')) {
+                            fetch('/delete_marker/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCookie('csrftoken')
+                                },
+                                body: JSON.stringify({ id: marker.id })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    mapMarker.setMap(null);
+                                    if (currentInfoWindow === infoWindow) {
+                                        currentInfoWindow.close();
+                                        currentInfoWindow = null;
+                                    }
+                                } else {
+                                    alert('マーカーの削除に失敗しました: ' + data.error);
+                                }
+                            });
+                        }
+                    });
 
-  // マーカーにクリックイベントを追加する
-  marker.addListener('click', function() {
-      window.location.href = '/review/' + location.lat() + ',' + location.lng();
-  });
+                    // ドラッグ終了時にマーカーの位置を更新するリスナーを追加
+                    mapMarker.addListener('dragend', function(event) {
+                        const newLat = event.latLng.lat();
+                        const newLng = event.latLng.lng();
 
-  // マーカーの位置を更新するためにドラッグイベントを追加します
-  marker.addListener('dragend', function(event) {
-      updateMarkerPosition(event.latLng, marker.id);
-  });
-}
+                        fetch('/update_marker/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({ id: marker.id, lat: newLat, lng: newLng })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                alert('マーカーの位置更新に失敗しました: ' + data.error);
+                            }
+                        });
+                    });
+                });
+            });
+    }
 
-function saveMarker(location) {
-   // メタタグからCSRFトークンを取得する
-  var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    // 初期にマーカーを読み込む
+    loadMarkers();
 
-  fetch('/add_marker/', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken  // ヘッダーにCSRFトークンを含めます
-      },
-      body: JSON.stringify({lat: location.lat(), lng: location.lng()})
-  }).then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error('Failed to save marker');
-        }
+    // マップクリック時にマーカーを追加
+    map.addListener('click', function(event) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+
+        fetch('/add_marker/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ lat: lat, lng: lng })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 新しいマーカーを追加した後にマーカーを再読み込み
+                loadMarkers();
+            } else {
+                alert('マーカーの追加に失敗しました: ' + data.error);
+            }
+        });
     });
 }
 
-function updateMarkerPosition(location, markerId) {
-  // メタタグからCSRFトークンを取得する
-  var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-  fetch('/update_marker/', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken  // ヘッダーにCSRFトークンを含めます
-      },
-      body: JSON.stringify({id: markerId, lat: location.lat(), lng: location.lng()})
-  }).then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            console.error('Failed to update marker position');
+// クッキーからCSRFトークンを取得する関数
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
-    });
+    }
+    return cookieValue;
 }

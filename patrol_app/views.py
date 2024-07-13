@@ -3,16 +3,27 @@ from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from allauth.account import views
 from django.views import View
-from patrol_app.models import CustomUser, Marker
-from patrol_app.forms import ProfileForm
+from patrol_app.models import CustomUser, Marker, Review
+from patrol_app.forms import ProfileForm, ReviewForm
 from django.conf import settings
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_protect
 
 class TopView(TemplateView):
-   template_name = 'top.html'
+    template_name = 'top.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        image_dir = os.path.join('media_local', 'top_images')
+        images = os.listdir(image_dir)
+        context['images'] = images
+        return context
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
@@ -72,7 +83,7 @@ class MarkerListView(View):
         marker_list = [{'id': marker.id, 'lat': marker.lat, 'lng': marker.lng} for marker in markers]
         return JsonResponse(marker_list, safe=False)
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_protect, name='dispatch')
 class MarkerCreateView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -83,7 +94,7 @@ class MarkerCreateView(View):
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_protect, name='dispatch')
 class MarkerUpdateView(View):
     def post(self, request):
         data = json.loads(request.body)
@@ -97,3 +108,48 @@ class MarkerUpdateView(View):
             marker.save()
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
+@method_decorator(csrf_protect, name='dispatch')
+class MarkerDeleteView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        marker_id = data.get('id')
+        if marker_id:
+            marker = get_object_or_404(Marker, id=marker_id)
+            marker.delete()
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
+class MarkerDetailView(LoginRequiredMixin, DetailView):
+    model = Marker
+    template_name = 'marker_detail.html'
+    context_object_name = 'marker'
+    login_url = '/login/' 
+    redirect_field_name = 'redirect_to'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        reviews = Review.objects.filter(marker=self.get_object())
+        context['reviews'] = reviews
+        return context
+
+class ReviewCreateView(LoginRequiredMixin, View):
+    form_class = ReviewForm
+    template_name = 'review_create.html'
+
+    def get(self, request, marker_id):
+        marker = get_object_or_404(Marker, id=marker_id)
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form, 'marker': marker})
+
+    def post(self, request, marker_id):
+        marker = get_object_or_404(Marker, id=marker_id)
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.marker = marker
+            review.user = request.user
+            review.save()
+            return redirect('marker_detail', pk=marker.id)
+        return render(request, self.template_name, {'form': form, 'marker': marker})
+
