@@ -18,13 +18,6 @@ from django.views.decorators.csrf import csrf_protect
 class TopView(TemplateView):
     template_name = 'top.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        image_dir = os.path.join('media_local', 'top_images')
-        images = os.listdir(image_dir)
-        context['images'] = images
-        return context
-
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
         user_data = CustomUser.objects.get(id=request.user.id)
