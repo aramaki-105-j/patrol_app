@@ -1,5 +1,5 @@
 from django.urls import path, include
-from patrol_app import views
+from patrol_app import views, credit
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -16,4 +16,12 @@ urlpatterns = [
     path('marker_detail/<int:pk>/', views.MarkerDetailView.as_view(), name='marker_detail'),
     
     path('marker/<int:marker_id>/review_create/', views.ReviewCreateView.as_view(), name='review_create'),
+
+    path('credit/register', credit.CreditRegisterView.as_view(), name='credit_register'),
+    path('credit/update', credit.CreditUpdateView.as_view(), name='credit_update'),
+    path('subscription/cancel', credit.SubscriptionCancelView.as_view(), name='subscription_cancel'),
+    path('subscription_complete/', credit.SubscriptionCompleteView.as_view(), name='subscription_complete'),
+    path('subscription/cancel/complete/', credit.SubscriptionCancelCompleteView.as_view(), name='subscription_cancel_complete'),
+    path('credit/update/complete/', credit.CreditUpdateCompleteView.as_view(), name='credit_update_complete'),
+
 ] 
