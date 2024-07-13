@@ -22,7 +22,7 @@
 
 <body>
     
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
@@ -30,6 +30,8 @@
             <a class="nav-link" href="/">トップ</a>
           </li>
           {% if user.is_authenticated %}
+          {% if user.is_paid %}
+
           <li class="nav-item">
             <a class="nav-link" href="/map/">マップ</a>
           </li>
@@ -37,8 +39,33 @@
             <a class="nav-link" href="{% url 'profile' %}">プロフィール</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_change_password' %}">パスワード変更</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'credit_update' %}">クレジットカード変更</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'subscription_cancel' %}">有料会員解約</a>
+          </li>
+
+          {% elif request.user.is_active %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="/map/">マップ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}">プロフィール</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_change_password' %}">パスワード変更</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'credit_register' %}">有料会員</a>
+          </li>
+          {% endif %}
           {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'account_signup' %}">サインアップ</a>

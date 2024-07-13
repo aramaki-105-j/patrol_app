@@ -35,6 +35,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     address = models.CharField('住所', max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
+    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_card_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     date_joined = models.DateTimeField(default=timezone.now)
     
     objects = CustomUserManager()
