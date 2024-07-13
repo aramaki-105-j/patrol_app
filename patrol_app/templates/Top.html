@@ -1,9 +1,17 @@
 {% extends "base.html" %}
- 
-{% block title %}小学校パトロール{% endblock %}
-{% block content %}
+{% load static %}
 
+{% block title %}小学校パトロール{% endblock %}
+
+{% block content %}
 <h1>長尾小学校パトロール</h1>
 
-
+<div class="slideshow-container">
+  <div class="slides">
+      <img src="{% static 'top_images/img1.png' %}" style="width:100%">
+  </div>
+  <div class="slides">
+      <img src="{% static 'top_images/img2.png' %}" style="width:100%">
+  </div>
+</div>
 {% endblock %}
