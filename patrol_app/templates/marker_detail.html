@@ -4,6 +4,20 @@
 
 {% block content %}
 <div class="container my-5">
+  <div class="mb-4">
+    <form method="get" class="d-flex">
+      {{ search_form.as_p }}
+      <button type="submit" class="btn btn-outline-primary ml-2">検索</button>
+    </form>
+  </div>
+  <div class="mb-4">
+    <form method="get" class="d-flex">
+      {{ sort_form.as_p }}
+      <button type="submit" class="btn btn-outline-secondary ml-2">並べ替え</button>
+    </form>
+  </div>
+  
+<div class="container my-5">
   <div class="text-center mb-4">
     <a href="{% url 'review_create' marker_id=marker.id %}" class="btn btn-primary">新規投稿</a>
   </div>
@@ -16,11 +30,35 @@
         <img src="{{ review.image.url }}" alt="Review image" class="card-img-top" style="height: 200px; object-fit: cover;">
         {% endif %}
         <div class="card-body">
+          <h6 class="card-title">{{ review.user.first_name }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{ review.created_at|date:"Y年m月d日" }}</h6>
           <p class="card-text">{{ review.content }}</p>
+          {% if review.user == request.user %}
+          <a href="{% url 'review_edit' review.pk %}" class="btn btn-warning">編集</a>
+          <a href="{% url 'review_delete' review.pk %}" class="btn btn-danger">削除</a>
+          {% endif %}
         </div>
       </div>
     </div>
     {% endfor %}
+  </div>
+
+  <div class="pagination">
+    <span class="step-links">
+        {% if reviews.has_previous %}
+            <a href="?page=1">« first</a>
+            <a href="?page={{ reviews.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}.
+        </span>
+
+        {% if reviews.has_next %}
+            <a href="?page={{ reviews.next_page_number }}">next</a>
+            <a href="?page={{ reviews.paginator.num_pages }}">last »</a>
+        {% endif %}
+    </span>
   </div>
 </div>
 {% endblock %}

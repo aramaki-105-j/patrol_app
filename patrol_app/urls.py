@@ -16,6 +16,8 @@ urlpatterns = [
     path('marker_detail/<int:pk>/', views.MarkerDetailView.as_view(), name='marker_detail'),
     
     path('marker/<int:marker_id>/review_create/', views.ReviewCreateView.as_view(), name='review_create'),
+    path('review/<int:pk>/delete/',  views.ReviewDeleteView.as_view(), name='review_delete'),
+    path('review/<int:pk>/edit/', views.ReviewUpdateView.as_view(), name='review_edit'),
 
     path('credit/register', credit.CreditRegisterView.as_view(), name='credit_register'),
     path('credit/update', credit.CreditUpdateView.as_view(), name='credit_update'),

@@ -37,3 +37,14 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['content', 'image']
+
+class ReviewSearchForm(forms.Form):
+    query = forms.CharField(label='レビュー内容', max_length=100, required=False)
+    first_name = forms.CharField(label='ユーザーの姓', max_length=20, required=False)
+    created_at = forms.DateField(label='作成日', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+
+class ReviewSortForm(forms.Form):
+    sort_by = forms.ChoiceField(label='並べ替え', choices=[
+        ('first_name', 'ユーザーの姓'),
+        ('created_at', '作成日')
+    ], required=False)

@@ -4,16 +4,19 @@ from django.shortcuts import render, redirect
 from allauth.account import views
 from django.views import View
 from patrol_app.models import CustomUser, Marker, Review
-from patrol_app.forms import ProfileForm, ReviewForm
+from patrol_app.forms import ProfileForm, ReviewForm, ReviewSearchForm, ReviewSortForm
 from django.conf import settings
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.decorators.csrf import csrf_protect
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.urls import reverse_lazy
 
 class TopView(TemplateView):
     template_name = 'top.html'
@@ -122,8 +125,41 @@ class MarkerDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        reviews = Review.objects.filter(marker=self.get_object())
-        context['reviews'] = reviews
+        marker = self.get_object()
+        reviews = Review.objects.filter(marker=marker)
+
+        # 検索フォームの処理
+        search_form = ReviewSearchForm(self.request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data.get('query')
+            first_name = search_form.cleaned_data.get('first_name')
+            created_at = search_form.cleaned_data.get('created_at')
+
+            if query:
+                reviews = reviews.filter(content__icontains=query)
+            if first_name:
+                reviews = reviews.filter(user__first_name__icontains=first_name)
+            if created_at:
+                reviews = reviews.filter(created_at__date=created_at)
+
+        # 並べ替えフォームの処理
+        sort_form = ReviewSortForm(self.request.GET)
+        if sort_form.is_valid():
+            sort_by = sort_form.cleaned_data.get('sort_by')
+            if sort_by:
+                if sort_by == 'first_name':
+                    reviews = reviews.order_by('user__first_name')
+                elif sort_by == 'created_at':
+                    reviews = reviews.order_by('-created_at')
+
+        # ページネーションの処理
+        paginator = Paginator(reviews, 10) 
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['reviews'] = page_obj
+        context['search_form'] = search_form
+        context['sort_form'] = sort_form
         return context
 
 class ReviewCreateView(LoginRequiredMixin, View):
@@ -146,3 +182,27 @@ class ReviewCreateView(LoginRequiredMixin, View):
             return redirect('marker_detail', pk=marker.id)
         return render(request, self.template_name, {'form': form, 'marker': marker})
 
+class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+    template_name = 'review_confirm_delete.html'
+    context_object_name = 'review'
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user == review.user
+
+    def get_success_url(self):
+        return reverse_lazy('marker_detail', kwargs={'pk': self.object.marker.id})
+
+class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'review_update.html'
+    context_object_name = 'review'
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user == review.user
+
+    def get_success_url(self):
+        return reverse_lazy('marker_detail', kwargs={'pk': self.object.marker.id})
