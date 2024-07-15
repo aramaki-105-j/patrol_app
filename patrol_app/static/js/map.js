@@ -6,6 +6,23 @@ function initMap() {
 
     let currentInfoWindow = null;
 
+    // Geocoding APIを使用して住所を取得する関数
+    function getAddress(lat, lng, callback) {
+        const geocoder = new google.maps.Geocoder();
+        const latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === 'OK') {
+                if (results[0]) {
+                    callback(results[0].formatted_address);
+                } else {
+                    callback('住所が見つかりませんでした');
+                }
+            } else {
+                callback('Geocoder failed due to: ' + status);
+            }
+        });
+    }
+
     // マーカーを読み込む関数
     function loadMarkers() {
         fetch('/get_markers/')
@@ -18,69 +35,82 @@ function initMap() {
                         draggable: true // ドラッグを有効にする
                     });
 
-                    const infoWindowContent = `
-                        <div>
-                            <p>マーカーID: ${marker.id}</p>
-                            <button onclick="window.location.href='/marker_detail/${marker.id}/'">詳細</button>
-                        </div>
-                    `;
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: infoWindowContent
-                    });
+                    getAddress(marker.lat, marker.lng, (address) => {
+                        const infoWindowContent = `
+                            <div>
+                                <p>マーカーID: ${marker.id}</p>
+                                <p>住所: ${address}</p>
+                                <button onclick="window.location.href='/marker_detail/${marker.id}/'">詳細</button>
+                            </div>
+                        `;
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: infoWindowContent
+                        });
 
-                    // マウスオーバーでInfoWindowを表示するリスナーを追加
-                    mapMarker.addListener('mouseover', function() {
-                        if (currentInfoWindow) {
-                            currentInfoWindow.close();
-                        }
-                        infoWindow.open(map, mapMarker);
-                        currentInfoWindow = infoWindow;
-                    });
+                        // マウスオーバーでInfoWindowを表示するリスナーを追加
+                        mapMarker.addListener('mouseover', function() {
+                            if (currentInfoWindow) {
+                                currentInfoWindow.close();
+                            }
+                            infoWindow.open(map, mapMarker);
+                            currentInfoWindow = infoWindow;
+                        });
 
-                    // 右クリックでマーカーを削除するリスナーを追加
-                    mapMarker.addListener('rightclick', function() {
-                        if (confirm('このマーカーを削除しますか？')) {
-                            fetch('/delete_marker/', {
+                        // 右クリックでマーカーを削除するリスナーを追加
+                        mapMarker.addListener('rightclick', function() {
+                            if (confirm('このマーカーを削除しますか？')) {
+                                fetch('/delete_marker/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken')
+                                    },
+                                    body: JSON.stringify({ id: marker.id })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        mapMarker.setMap(null);
+                                        if (currentInfoWindow === infoWindow) {
+                                            currentInfoWindow.close();
+                                            currentInfoWindow = null;
+                                        }
+                                    } else {
+                                        alert('マーカーの削除に失敗しました: ' + data.error);
+                                    }
+                                });
+                            }
+                        });
+
+                        // ドラッグ終了時にマーカーの位置を更新するリスナーを追加
+                        mapMarker.addListener('dragend', function(event) {
+                            const newLat = event.latLng.lat();
+                            const newLng = event.latLng.lng();
+
+                            fetch('/update_marker/', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'X-CSRFToken': getCookie('csrftoken')
                                 },
-                                body: JSON.stringify({ id: marker.id })
+                                body: JSON.stringify({ id: marker.id, lat: newLat, lng: newLng })
                             })
                             .then(response => response.json())
                             .then(data => {
-                                if (data.success) {
-                                    mapMarker.setMap(null);
-                                    if (currentInfoWindow === infoWindow) {
-                                        currentInfoWindow.close();
-                                        currentInfoWindow = null;
-                                    }
+                                if (!data.success) {
+                                    alert('マーカーの位置更新に失敗しました: ' + data.error);
                                 } else {
-                                    alert('マーカーの削除に失敗しました: ' + data.error);
+                                    getAddress(newLat, newLng, (newAddress) => {
+                                        infoWindow.setContent(`
+                                            <div>
+                                                <p>マーカーID: ${marker.id}</p>
+                                                <p>住所: ${newAddress}</p>
+                                                <button onclick="window.location.href='/marker_detail/${marker.id}/'">詳細</button>
+                                            </div>
+                                        `);
+                                    });
                                 }
                             });
-                        }
-                    });
-
-                    // ドラッグ終了時にマーカーの位置を更新するリスナーを追加
-                    mapMarker.addListener('dragend', function(event) {
-                        const newLat = event.latLng.lat();
-                        const newLng = event.latLng.lng();
-
-                        fetch('/update_marker/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': getCookie('csrftoken')
-                            },
-                            body: JSON.stringify({ id: marker.id, lat: newLat, lng: newLng })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (!data.success) {
-                                alert('マーカーの位置更新に失敗しました: ' + data.error);
-                            }
                         });
                     });
                 });

@@ -47,6 +47,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'subscription_cancel' %}">有料会員解約</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
+          </li>
 
           {% elif request.user.is_active %}
 
