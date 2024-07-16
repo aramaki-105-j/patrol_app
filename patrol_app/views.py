@@ -27,10 +27,10 @@ class TopView(TemplateView):
         context = super().get_context_data(**kwargs)
         # 画像をCloudinaryにアップロードし、URLを取得
         static_image_path = os.path.join('static', 'top_images')
-        context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.jpg'))
-        context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.jpg'))
-        context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.jpg'))
-        context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.jpg'))
+        context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.png'))
+        context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.png'))
+        context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.png'))
+        context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.png'))
         return context
 
 
