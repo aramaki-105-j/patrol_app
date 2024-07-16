@@ -25,13 +25,31 @@ class TopView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # 画像をCloudinaryにアップロードし、URLを取得
         static_image_path = os.path.join('static', 'top_images')
-        context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.png'))
-        context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.png'))
-        context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.png'))
-        context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.png'))
+
+        # 画像の存在を確認
+        if check_image_exists(os.path.join(static_image_path, 'img1.png')):
+            context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.png'))
+        if check_image_exists(os.path.join(static_image_path, 'img2.png')):
+            context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.png'))
+        if check_image_exists(os.path.join(static_image_path, 'img3.png')):
+            context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.png'))
+        if check_image_exists(os.path.join(static_image_path, 'img4.png')):
+            context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.png'))
+
         return context
+
+def upload_image_to_cloudinary(image_path):
+    result = cloudinary.uploader.upload(image_path)
+    return result['url']
+
+def check_image_exists(image_path):
+    return os.path.exists(image_path)
+
+print(check_image_exists(os.path.join('static', 'top_images', 'img1.png')))
+print(check_image_exists(os.path.join('static', 'top_images', 'img2.png')))
+print(check_image_exists(os.path.join('static', 'top_images', 'img3.png')))
+print(check_image_exists(os.path.join('static', 'top_images', 'img4.png')))
 
 
 class ProfileView(View):
