@@ -40,8 +40,12 @@ class TopView(TemplateView):
         return context
 
 def upload_image_to_cloudinary(image_path):
-    result = cloudinary.uploader.upload(image_path)
-    return result['url']
+    try:
+        result = cloudinary.uploader.upload(image_path)
+        return result['url']
+    except Exception as e:
+        print(f"Error uploading {image_path}: {e}")
+        return None
 
 def check_image_exists(image_path):
     return os.path.exists(image_path)

@@ -162,9 +162,9 @@ CLOUDINARY_STORAGE = {
 }
 
 cloudinary.config(
-  cloud_name = dj_database_url.config(default=os.environ['CLOUDINARY_URL']).get('CLOUD_NAME'),
-  api_key = dj_database_url.config(default=os.environ['CLOUDINARY_URL']).get('API_KEY'),
-  api_secret = dj_database_url.config(default=os.environ['CLOUDINARY_URL']).get('API_SECRET')
+  cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'],
+  api_key = CLOUDINARY_STORAGE['API_KEY'],
+  api_secret = CLOUDINARY_STORAGE['API_SECRET']
 )
 
 # Default primary key field type
