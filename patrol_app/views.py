@@ -17,9 +17,19 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
+import cloudinary.uploader
 
 class TopView(TemplateView):
     template_name = 'top.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Cloudinaryにアップロードした画像のURLを取得
+        context['cloudinary_url_1'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img1.png'
+        context['cloudinary_url_2'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img2.png'
+        context['cloudinary_url_3'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img3.png'
+        context['cloudinary_url_4'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img4.png'
+        return context
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
