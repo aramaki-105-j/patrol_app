@@ -18,18 +18,21 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 import cloudinary.uploader
+import os
 
 class TopView(TemplateView):
     template_name = 'top.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Cloudinaryにアップロードした画像のURLを取得
-        context['cloudinary_url_1'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img1.png'
-        context['cloudinary_url_2'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img2.png'
-        context['cloudinary_url_3'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img3.png'
-        context['cloudinary_url_4'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img4.png'
+        # 画像をCloudinaryにアップロードし、URLを取得
+        static_image_path = os.path.join('static', 'top_images')
+        context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.jpg'))
+        context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.jpg'))
+        context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.jpg'))
+        context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.jpg'))
         return context
+
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
