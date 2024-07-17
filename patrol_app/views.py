@@ -17,44 +17,17 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
-import cloudinary.uploader
-import os
 
 class TopView(TemplateView):
     template_name = 'top.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        static_image_path = os.path.join('static', 'top_images')
-
-        # 画像の存在を確認
-        if check_image_exists(os.path.join(static_image_path, 'img1.png')):
-            context['cloudinary_url_1'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img1.png'))
-        if check_image_exists(os.path.join(static_image_path, 'img2.png')):
-            context['cloudinary_url_2'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img2.png'))
-        if check_image_exists(os.path.join(static_image_path, 'img3.png')):
-            context['cloudinary_url_3'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img3.png'))
-        if check_image_exists(os.path.join(static_image_path, 'img4.png')):
-            context['cloudinary_url_4'] = upload_image_to_cloudinary(os.path.join(static_image_path, 'img4.png'))
-
+        context['cloudinary_url_1'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img1.png'
+        context['cloudinary_url_2'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img2.png'
+        context['cloudinary_url_3'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img3.png'
+        context['cloudinary_url_4'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img4.png'
         return context
-
-def upload_image_to_cloudinary(image_path):
-    try:
-        result = cloudinary.uploader.upload(image_path)
-        return result['url']
-    except Exception as e:
-        print(f"Error uploading {image_path}: {e}")
-        return None
-
-def check_image_exists(image_path):
-    return os.path.exists(image_path)
-
-print(check_image_exists(os.path.join('static', 'top_images', 'img1.png')))
-print(check_image_exists(os.path.join('static', 'top_images', 'img2.png')))
-print(check_image_exists(os.path.join('static', 'top_images', 'img3.png')))
-print(check_image_exists(os.path.join('static', 'top_images', 'img4.png')))
-
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
