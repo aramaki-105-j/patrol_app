@@ -16,12 +16,6 @@ import environ
 from decouple import config
 import dj_database_url
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -160,12 +154,6 @@ CLOUDINARY_STORAGE = {
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET')
 }
-
-cloudinary.config(
-  cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'],
-  api_key = CLOUDINARY_STORAGE['API_KEY'],
-  api_secret = CLOUDINARY_STORAGE['API_SECRET']
-)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from patrol_app import views, credit
 from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('', views.TopView.as_view(), name='top'),
@@ -26,4 +27,4 @@ urlpatterns = [
     path('subscription/cancel/complete/', credit.SubscriptionCancelCompleteView.as_view(), name='subscription_cancel_complete'),
     path('credit/update/complete/', credit.CreditUpdateCompleteView.as_view(), name='credit_update_complete'),
 
-] 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
