@@ -24,11 +24,12 @@
     
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
+      <a class="navbar-brand" href="/">小学校パトロール</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/">トップ</a>
-          </li>
+        <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
           {% if user.is_paid %}
 
@@ -46,6 +47,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'subscription_cancel' %}">有料会員解約</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'top_image_create' %}">Top画像登録</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
@@ -103,17 +107,6 @@
  <!-- Slick JS -->
  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
- <script type="text/javascript">
-  $(document).ready(function(){
-      $('.image-slider').slick({
-          dots: true,
-          infinite: true,
-          speed: 300,
-          slidesToShow: 1,
-          adaptiveHeight: true
-      });
-  });
-</script>
-<script src="{% static 'js/slideshow.js' %}"></script>
+ <script src="{% static 'js/slideshow.js' %}"></script>
 </body>
 </html>

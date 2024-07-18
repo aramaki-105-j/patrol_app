@@ -4,20 +4,13 @@
 {% block title %}小学校パトロール{% endblock %}
 
 {% block content %}
-<h1>長尾小学校パトロール</h1>
+<h1 class="text-center my-4">長尾小学校パトロール</h1>
 
-<div class="slideshow-container">
-  <div class="slides">
-      <img src="{{ cloudinary_url_1 }}" style="width:100%">
-  </div>
-  <div class="slides">
-      <img src="{{ cloudinary_url_2 }}" style="width:100%">
-  </div>
-  <div class="slides">
-      <img src="{{ cloudinary_url_3 }}" style="width:100%">
-  </div>
-  <div class="slides">
-      <img src="{{ cloudinary_url_4 }}" style="width:100%">
+<div id="slideshow-container" class="mx-auto">
+  <div id="slideshow">
+    {% for image in images %}
+        <img src="{{ image.image.url }}" alt="Image" class="slide">
+    {% endfor %}
   </div>
 </div>
 
