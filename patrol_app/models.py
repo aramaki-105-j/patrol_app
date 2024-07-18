@@ -61,3 +61,9 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review for Marker {self.marker.id}"
+
+class TopImage(models.Model):
+    image = models.ImageField(upload_to='images', verbose_name='イメージ画像', null=True, blank=True)
+    
+    def __str__(self):
+        return str(self.image)

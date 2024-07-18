@@ -5,6 +5,9 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.TopView.as_view(), name='top'),
+    path('top_image_create', views.TopImageCreateView.as_view(), name='top_image_create'),
+
+
     path('account/', include('allauth.urls')),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/edit/', views.ProfileEditView.as_view(), name='profile_edit'),
@@ -27,4 +30,4 @@ urlpatterns = [
     path('subscription/cancel/complete/', credit.SubscriptionCancelCompleteView.as_view(), name='subscription_cancel_complete'),
     path('credit/update/complete/', credit.CreditUpdateCompleteView.as_view(), name='credit_update_complete'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

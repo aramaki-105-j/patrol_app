@@ -1,7 +1,7 @@
 from django import forms
 from allauth.account.forms import SignupForm
 from allauth.account.adapter import DefaultAccountAdapter
-from .models import CustomUser, Review
+from .models import CustomUser, Review, TopImage
 
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='姓')
@@ -48,3 +48,8 @@ class ReviewSortForm(forms.Form):
         ('first_name', 'ユーザーの姓'),
         ('created_at', '作成日')
     ], required=False)
+
+class TopImageCreateForm(forms.ModelForm):
+    class Meta:
+        model = TopImage
+        fields = ['image']

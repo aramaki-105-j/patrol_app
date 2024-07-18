@@ -212,63 +212,6 @@ h1.text-center {
   font-size: 2.5rem;
 }
 
-/* 背景のスタイル */
-body {
-  background: linear-gradient(135deg, #ff7e5f, #feb47b);
-  animation: gradient 15s ease infinite;
-  background-size: 400% 400%;
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* スライドショーコンテナのスタイル */
-.slideshow-container {
-  position: relative;
-  max-width: 80%;
-  margin: auto;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* スライドのスタイル */
-.slides {
-  display: none;
-  animation: fade 1.5s ease-in-out, zoom 20s infinite;
-}
-
-.slides img {
-  width: 100%;
-  height: auto; 
-  object-fit: cover; 
-  border-radius: 15px;
-}
-
-/* h1 スタイル */
-h1 {
-  font-family: 'Arial', sans-serif;
-  font-size: 2.5em;
-  text-align: center;
-  background: linear-gradient(to right, #5f87ff, #7bbcfe);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  margin-bottom: 20px;
-  animation: fadeIn 2s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
 
 /* パスワード変更 */
 .password-change-container {
@@ -387,4 +330,30 @@ h1 {
   text-decoration: none;
   display: inline-block;
   text-align: center;
+}
+
+/* top画像 */
+#slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  margin: auto;
+  overflow: hidden;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#slideshow {
+  display: flex;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }

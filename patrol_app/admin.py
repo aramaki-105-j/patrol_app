@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Marker, Review
+from .models import CustomUser, Marker, Review, TopImage
 
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'email', 'first_name', 'last_name', 'address')
@@ -13,3 +13,4 @@ class MarkerAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 
 admin.site.register(Review)
+admin.site.register(TopImage)

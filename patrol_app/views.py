@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.shortcuts import render, redirect
 from allauth.account import views
 from django.views import View
-from patrol_app.models import CustomUser, Marker, Review
-from patrol_app.forms import ProfileForm, ReviewForm, ReviewSearchForm, ReviewSortForm
+from patrol_app.models import CustomUser, Marker, Review, TopImage
+from patrol_app.forms import ProfileForm, ReviewForm, ReviewSearchForm, ReviewSortForm, TopImageCreateForm
 from django.conf import settings
 from django.http import JsonResponse
 import json
@@ -18,16 +18,28 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 
-class TopView(TemplateView):
+class TopView(ListView):
+    model = TopImage
     template_name = 'top.html'
+    context_object_name = 'images'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cloudinary_url_1'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img1.png'
-        context['cloudinary_url_2'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img2.png'
-        context['cloudinary_url_3'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img3.png'
-        context['cloudinary_url_4'] = 'https://res.cloudinary.com/huplvq28i/image/upload/v1234567890/img4.png'
-        return context
+class TopImageCreateView(UserPassesTestMixin, CreateView):
+    template_name = 'topimegecreate_form.html'
+    model = TopImage
+    form_class = TopImageCreateForm
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_paid
+
+    def handle_no_permission(self):
+        return redirect('top')
+    
+    def post(self, request, *args, **kwargs):
+        form = TopImageCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('top')
+        return render(request, 'topimegecreate_form.html', {'form': form})
 
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
