@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}画像削除確認{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-4">画像削除確認</h1>
+<p>本当にこの画像を削除しますか？</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">削除</button>
+    <a href="{% url 'top' %}" class="btn btn-secondary">キャンセル</a>
+</form>
+{% endblock %}
