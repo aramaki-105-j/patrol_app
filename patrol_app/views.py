@@ -41,6 +41,17 @@ class TopImageCreateView(UserPassesTestMixin, CreateView):
             return redirect('top')
         return render(request, 'topimegecreate_form.html', {'form': form})
 
+class TopImageDeleteView(UserPassesTestMixin, DeleteView):
+    model = TopImage
+    template_name = 'topimage_delete_confirm.html'
+    success_url = reverse_lazy('top')
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.is_paid
+
+    def handle_no_permission(self):
+        return redirect('top')
+
 class ProfileView(View):
     def get(self, request, *args, **kwargs):
         user_data = CustomUser.objects.get(id=request.user.id)

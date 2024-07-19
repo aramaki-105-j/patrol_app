@@ -5,7 +5,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.TopView.as_view(), name='top'),
-    path('top_image_create', views.TopImageCreateView.as_view(), name='top_image_create'),
+    path('top_image_create/', views.TopImageCreateView.as_view(), name='top_image_create'),
+    path('top_image_delete/<int:pk>/', views.TopImageDeleteView.as_view(), name='top_image_delete'),
 
 
     path('account/', include('allauth.urls')),
@@ -23,9 +24,9 @@ urlpatterns = [
     path('review/<int:pk>/delete/',  views.ReviewDeleteView.as_view(), name='review_delete'),
     path('review/<int:pk>/edit/', views.ReviewUpdateView.as_view(), name='review_edit'),
 
-    path('credit/register', credit.CreditRegisterView.as_view(), name='credit_register'),
-    path('credit/update', credit.CreditUpdateView.as_view(), name='credit_update'),
-    path('subscription/cancel', credit.SubscriptionCancelView.as_view(), name='subscription_cancel'),
+    path('credit/register/', credit.CreditRegisterView.as_view(), name='credit_register'),
+    path('credit/update/', credit.CreditUpdateView.as_view(), name='credit_update'),
+    path('subscription/cancel/', credit.SubscriptionCancelView.as_view(), name='subscription_cancel'),
     path('subscription_complete/', credit.SubscriptionCompleteView.as_view(), name='subscription_complete'),
     path('subscription/cancel/complete/', credit.SubscriptionCancelCompleteView.as_view(), name='subscription_cancel_complete'),
     path('credit/update/complete/', credit.CreditUpdateCompleteView.as_view(), name='credit_update_complete'),
