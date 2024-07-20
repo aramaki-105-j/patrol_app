@@ -8,13 +8,17 @@
 
 <div id="slideshow-container" class="mx-auto">
   <div id="slideshow">
-    {% for image in images %}
-        <div class="slide-container">
-            <a href="{% url 'topimage_delete' image.pk %}">
-                <img src="{{ image.image.url }}" alt="Image" class="slide">
-            </a>
-        </div>
-    {% endfor %}
+    {% if images %}
+        {% for image in images %}
+            <div class="slide-container">
+                <a href="{% url 'topimage_delete' image.pk %}">
+                    <img src="{{ image.image.url }}" alt="Image" class="slide">
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">表示する画像がありません。</p>
+    {% endif %}
   </div>
 </div>
 
