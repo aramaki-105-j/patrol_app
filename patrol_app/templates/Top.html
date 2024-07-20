@@ -10,22 +10,12 @@
   <div id="slideshow">
     {% for image in images %}
         <div class="slide-container">
-            <img src="{{ image.image.url }}" alt="Image" class="slide">
-            <a href="{% url 'topimage_delete' image.pk %}" class="btn btn-danger">削除</a>
+            <a href="{% url 'topimage_delete' image.pk %}">
+                <img src="{{ image.image.url }}" alt="Image" class="slide">
+            </a>
         </div>
     {% endfor %}
   </div>
 </div>
 
-<script>
-  let currentIndex = 0;
-  const images = document.querySelectorAll('.slide');
-  images[currentIndex].style.opacity = 1;
-
-  setInterval(() => {
-    images[currentIndex].style.opacity = 0;
-    currentIndex = (currentIndex + 1) % images.length;
-    images[currentIndex].style.opacity = 1;
-  }, 4000); // 4秒ごとに画像を切り替え
-</script>
 {% endblock %}

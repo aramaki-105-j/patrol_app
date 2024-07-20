@@ -6,7 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('', views.TopView.as_view(), name='top'),
     path('top_image_create/', views.TopImageCreateView.as_view(), name='top_image_create'),
-    path('top_image_delete/<int:pk>/', views.TopImageDeleteView.as_view(), name='top_image_delete'),
+    path('topimage_delete/<int:pk>/', views.TopImageDeleteView.as_view(), name='topimage_delete'),
 
 
     path('account/', include('allauth.urls')),
