@@ -22,9 +22,10 @@ def self_introduction_view(request):
     self_intro = SelfIntroduction.objects.first()
     return render(request, 'self_introduction.html', {'self_intro': self_intro})
 
-def top_view(request):
-    images = TopImage.objects.all()
-    return render(request, 'top.html', {'images': images})
+class TopImageView(ListView):
+    model = TopImage
+    template_name = 'topimage.html'
+    context_object_name = 'images'
 
 class TopImageCreateView(UserPassesTestMixin, CreateView):
     template_name = 'topimegecreate_form.html'
