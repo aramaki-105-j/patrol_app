@@ -67,3 +67,10 @@ class TopImage(models.Model):
     
     def __str__(self):
         return str(self.image)
+
+class SelfIntroduction(models.Model):
+    image = models.ImageField(upload_to='images', verbose_name='イメージ画像', null=True, blank=True)
+    second_image = models.ImageField(upload_to='images', verbose_name='イメージ画像', blank=True, null=True)
+    
+    def __str__(self):
+        return str(self.image)
