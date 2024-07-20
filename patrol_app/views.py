@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView
 from django.shortcuts import render, redirect
 from allauth.account import views
 from django.views import View
-from patrol_app.models import CustomUser, Marker, Review, TopImage
+from patrol_app.models import CustomUser, Marker, Review, TopImage, SelfIntroduction
 from patrol_app.forms import ProfileForm, ReviewForm, ReviewSearchForm, ReviewSortForm, TopImageCreateForm
 from django.conf import settings
 from django.http import JsonResponse
@@ -17,6 +17,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
+
+def self_introduction_view(request):
+    self_intro = SelfIntroduction.objects.first()
+    return render(request, 'self_introduction.html', {'self_intro': self_intro})
 
 class TopView(ListView):
     model = TopImage

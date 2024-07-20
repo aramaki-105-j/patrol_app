@@ -4,7 +4,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', views.TopView.as_view(), name='top'),
+    path('', views.self_introduction_view, name='self_introduction'),
+
+    path('top/', views.TopView.as_view(), name='top'),
     path('top_image_create/', views.TopImageCreateView.as_view(), name='top_image_create'),
     path('topimage_delete/<int:pk>/', views.TopImageDeleteView.as_view(), name='topimage_delete'),
 
