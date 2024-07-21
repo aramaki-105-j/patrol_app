@@ -62,13 +62,30 @@ function initMap() {
                             currentInfoWindow = infoWindow;
                         });
 
-                        // 右クリックと長押しでマーカーを削除するリスナーを追加
-                        mapMarker.addListener('rightclick', function() {
-                            deleteMarker(marker.id, mapMarker, infoWindow);
-                        });
-
-                        mapMarker.addListener('longpress', function() {
-                            deleteMarker(marker.id, mapMarker, infoWindow);
+                        // ダブルクリックで確認ダイアログを表示し、マーカーを削除するリスナーを追加
+                        mapMarker.addListener('dblclick', function() {
+                            if (confirm('このマーカーを削除しますか？')) {
+                                fetch('/delete_marker/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken')
+                                    },
+                                    body: JSON.stringify({ id: marker.id })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        mapMarker.setMap(null);
+                                        if (currentInfoWindow === infoWindow) {
+                                            currentInfoWindow.close();
+                                            currentInfoWindow = null;
+                                        }
+                                    } else {
+                                        alert('マーカーの削除に失敗しました: ' + data.error);
+                                    }
+                                });
+                            }
                         });
 
                         mapMarker.addListener('dragend', function(event) {
@@ -103,31 +120,6 @@ function initMap() {
                     });
                 });
             });
-    }
-
-    function deleteMarker(id, mapMarker, infoWindow) {
-        if (confirm('このマーカーを削除しますか？')) {
-            fetch('/delete_marker/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({ id: id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mapMarker.setMap(null);
-                    if (currentInfoWindow === infoWindow) {
-                        currentInfoWindow.close();
-                        currentInfoWindow = null;
-                    }
-                } else {
-                    alert('マーカーの削除に失敗しました: ' + data.error);
-                }
-            });
-        }
     }
 
     loadMarkers();
