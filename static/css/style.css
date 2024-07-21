@@ -1,3 +1,4 @@
+/* ベース、自己紹介 */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f8f9fa;
@@ -65,10 +66,17 @@ a:hover {
   font-size: 0.9rem; 
 }
 
-.alert-info {
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-  color: #0c5460;
+.login-info {
+  background-color: #343a40;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+ruby rt {
+  font-size: 0.6em;
+  line-height: 1;
 }
 
 h2 {
